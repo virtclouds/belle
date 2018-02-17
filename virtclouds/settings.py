@@ -55,7 +55,7 @@ ROOT_URLCONF = 'virtclouds.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,6 +81,9 @@ DATABASES = {
         'USER': 'belle',
         'PASSWORD': 'Qwe!23',
         'HOST': '45.76.155.47',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
    }
 }
 
