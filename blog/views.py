@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 from .models import Post, Category
 import markdown
 from django.views.generic import ListView, DetailView
+from comments.forms import CommentForm
 
 
 class IndexView(ListView):
