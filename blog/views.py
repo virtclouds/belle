@@ -21,6 +21,11 @@ class CategoryView(IndexView):
         return super(CategoryView, self).get_queryset().filter(category=cate)
 
 
+class ArchivesView(IndexView):
+    def get_queryset(self):
+        return super(ArchivesView, self).filter(created_time_year=year,
+                                                created_time_month=month)
+
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
@@ -36,9 +41,4 @@ def detail(request, pk):
                                   ])
     return render(request, 'blog/detail.html', context={'post': post})
 
-def archives(request, year, month):
-    post_list = Post.objects.filter(created_time__year=year,
-                                    created_time__month=month
-                                    )
-    return render(request, 'blog/index.html', context={'post_list': post_list})
 
