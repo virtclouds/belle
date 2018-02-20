@@ -4,10 +4,12 @@ from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404
 
 # Create your views here.
-from .models import Post, Category
+from blog.models import Post, Category, Tag
 import markdown
 from django.views.generic import ListView, DetailView
 from comments.forms import CommentForm
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
 
 
 class IndexView(ListView):
@@ -168,6 +170,15 @@ class ArchivesView(ListView):
                                                                created_time__month=month
                                                                )
 
+class TagView(ListView):
+    model = Post
+    template_name = 'blog/index.html'
+    context_object_name = 'post_list'
+
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
+        return super(TagView, self).get_queryset().filter(tags=tag)
+
 
 # 记得在顶部导入 DetailView
 class PostDetailView(DetailView):
@@ -192,13 +203,14 @@ class PostDetailView(DetailView):
 
     def get_object(self, queryset=None):
         # 覆写 get_object 方法的目的是因为需要对 post 的 body 值进行渲染
+        md = markdown.Markdown(extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            TocExtension(slugify=slugify),
+        ])
         post = super(PostDetailView, self).get_object(queryset=None)
-        post.body = markdown.markdown(post.body,
-                                      extensions=[
-                                          'markdown.extensions.extra',
-                                          'markdown.extensions.codehilite',
-                                          'markdown.extensions.toc',
-                                      ])
+        post.body = md.convert(post.body)
+        post.toc = md.toc
         return post
 
     def get_context_data(self, **kwargs):
