@@ -15,6 +15,12 @@ class IndexView(ListView):
     context_object_name = 'post_list'
 
 
+class CategoryView(IndexView):
+    def get_queryset(self):
+        cate = get_object_or_404(Category, pk=self.kwargs.get('pk'))
+        return super(CategoryView, self).get_queryset().filter(category=cate)
+
+
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
@@ -36,8 +42,3 @@ def archives(request, year, month):
                                     )
     return render(request, 'blog/index.html', context={'post_list': post_list})
 
-def category(request, pk):
-    # 记得在开始部分导入 Category 类
-    cate = get_object_or_404(Category, pk=pk)
-    post_list = Post.objects.filter(category=cate)
-    return render(request, 'blog/index.html', context={'post_list': post_list})
