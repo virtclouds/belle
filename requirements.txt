@@ -1,0 +1,7 @@
+django
+Markdown
+Pygments
+pytz
+django-haystack
+jieba
+Whoosh
